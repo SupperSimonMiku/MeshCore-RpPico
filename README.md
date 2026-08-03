@@ -8,12 +8,6 @@ This is a fork of upstream [meshcore-dev/MeshCore](https://github.com/meshcore-d
 
 ### PicoW SX1276 board changes
 
-`variants/rpi_picow_sx1276/PicoWBoard.h` now defines:
-
-* `LED_PIN` (GPIO 2) — TX indicator LED, replacing the core's `LED_BUILTIN`
-* `BATTERY_PIN` (GPIO 26) — battery voltage sense pin
-* `ADC_MULTIPLIER` (3.22) — voltage-divider ratio; `getBattMilliVolts()` now computes millivolts explicitly from the 3.3V ADC reference rather than folding it into the constant
-* `EXT_NOTIFY_OUT` (GPIO 22) — external beeper/notification output, driven via `board.startNotify()` / `board.stopNotify()`
 
 ### BLE advertising patch
 
