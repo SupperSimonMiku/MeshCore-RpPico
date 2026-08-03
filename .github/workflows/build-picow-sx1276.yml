@@ -16,10 +16,11 @@ jobs:
         environment:
           - PicoW_SX1276_repeater
           - PicoW_SX1276_room_server
-          - PicoW_SX1276_companion_radio_ble
           - PicoW_SX1276_companion_radio_usb
           - PicoW_SX1276_terminal_chat
           - PicoW_SX1276_kiss_modem
+          - PicoW_SX1276_companion_radio_ble
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +36,7 @@ jobs:
           path: |
             ~/.platformio
             ~/.cache/pip
-          key: pio-${{ runner.os }}-${{ hashFiles('platformio.ini') }}
+          key: pio-${{ runner.os }}-${{ hashFiles('platformio.ini', 'patches/BLEAdvertising.cpp') }}
           restore-keys: |
             pio-${{ runner.os }}-
 
