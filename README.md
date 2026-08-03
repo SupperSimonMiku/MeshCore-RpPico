@@ -2,6 +2,31 @@
 
 MeshCore is a lightweight, portable C++ library that enables multi-hop packet routing for embedded projects using LoRa and other packet radios. It is designed for developers who want to create resilient, decentralized communication networks that work without the internet.
 
+## 🔀 About This Fork
+
+This is a fork of upstream [meshcore-dev/MeshCore](https://github.com/meshcore-dev/MeshCore), maintained here with the following additions on top of the base project:
+
+### PicoW SX1276 board changes
+
+`variants/rpi_picow_sx1276/PicoWBoard.h` now defines:
+
+* `LED_PIN` (GPIO 2) — TX indicator LED, replacing the core's `LED_BUILTIN`
+* `BATTERY_PIN` (GPIO 26) — battery voltage sense pin
+* `ADC_MULTIPLIER` (3.22) — voltage-divider ratio; `getBattMilliVolts()` now computes millivolts explicitly from the 3.3V ADC reference rather than folding it into the constant
+* `EXT_NOTIFY_OUT` (GPIO 22) — external beeper/notification output, driven via `board.startNotify()` / `board.stopNotify()`
+
+### BLE advertising patch
+
+This fork applies a diagnostic patch to `earlephilhower/arduino-pico`'s `BLEAdvertising.cpp`, removing the mandatory Flags AD structure from the primary advertising packet. This reclaims 3 of the 31 available bytes in the legacy advertising packet, letting the full `MeshCore-` name prefix fit alongside a 128-bit Service UUID — without it, the name gets silently truncated to `MeshCore`, which breaks discovery in scanners (e.g. MeshCoreOne) that match on the full prefix.
+
+The patch lives at `patches/BLEAdvertising.cpp` and is applied automatically to the local PlatformIO framework cache at build time via `patch_framework.py` (wired in through `extra_scripts` in `platformio.ini` for the `PicoW_SX1276_companion_radio_ble` environment). It's a local build-time patch, not a change submitted upstream to `arduino-pico`. See [MeshCoreOne#227](https://github.com/Avi0n/MeshCoreOne/issues/227) for the full diagnosis.
+
+### CI / Releases
+
+[`.github/workflows/build-picow-sx1276.yml`](.github/workflows/build-picow-sx1276.yml) builds every `rpi_picow_sx1276`-based firmware environment on each push/PR to `main`, and automatically publishes a GitHub Release with all firmware binaries attached whenever a `v*` tag is pushed.
+
+Prebuilt firmware for this fork: see the [Releases page](https://github.com/SupperSimonMiku/MeshCore/releases).
+
 ## 🔍 What is MeshCore?
 
 MeshCore now supports a range of LoRa devices, allowing for easy flashing without the need to compile firmware manually. Users can flash a pre-built binary using tools like Adafruit ESPTool and interact with the network through a serial console.
